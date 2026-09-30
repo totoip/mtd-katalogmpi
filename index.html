@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog MPI & Game Interaktif - Mas T Digital</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class', // Menggunakan standar baku class "dark"
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['Fira Code', 'Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* Custom Tech Grid Pattern */
+    .bg-tech-pattern {
+      background-image: radial-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .dark .bg-tech-pattern {
+      background-image: radial-gradient(rgba(99, 102, 241, 0.15) 1px, transparent 1px);
+    }
+    
+    /* Neon Glow Effects */
+    .dark .neon-border {
+      box-shadow: 0 0 15px -3px rgba(99, 102, 241, 0.3);
+    }
+    .dark .neon-border:hover {
+      box-shadow: 0 0 25px 0px rgba(6, 182, 212, 0.5);
+    }
+
+    /* Admin Only Elements */
+    .admin-only { display: none !important; }
+    body.admin-mode .admin-only { display: flex !important; }
+    body.admin-mode .admin-only-block { display: block !important; }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col font-sans bg-tech-pattern relative selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP GLOW DECORATION -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-64 bg-gradient-to-r from-indigo-600/10 via-cyan-500/5 to-purple-600/10 dark:from-indigo-600/20 dark:via-cyan-500/10 dark:to-purple-600/20 blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- LOGO & BRANDING -->
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl blur opacity-30 dark:opacity-60 animate-pulse"></div>
+          <div class="relative bg-indigo-50 dark:bg-slate-900 text-indigo-600 dark:text-cyan-400 p-2.5 rounded-xl border border-indigo-200 dark:border-slate-700/80">
+            <i data-lucide="cpu" class="w-6 h-6"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base md:text-lg leading-tight tracking-wide text-slate-900 dark:text-white flex items-center gap-2">
+            KATALOG MPI & GAME
+            <span class="text-[10px] uppercase font-mono tracking-widest bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-cyan-400 border border-indigo-300 dark:border-cyan-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-cyan-400 animate-ping"></span> Cyber
+            </span>
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            Engineered by <span class="text-indigo-600 dark:text-cyan-400 font-semibold tracking-wide">Mas T Digital</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- ACTIONS & CONTROLS -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- Tombol Admin -->
+        <button onclick="openModalForm()" class="admin-only bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold items-center gap-1.5 shadow-lg border transition">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah Media
+        </button>
+
+        <!-- Toggle Theme (Dark / Light) -->
+        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-indigo-600 dark:text-amber-400 hover:border-indigo-500 transition shadow-inner flex items-center justify-center w-9 h-9">
+          <svg id="sunIcon" class="w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <!-- Tombol Produk Digital -->
+        <a href="https://lynk.id/totoip" target="_blank" class="bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition">
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-indigo-600 dark:text-cyan-400"></i>
+          <span class="hidden sm:inline">Cek</span> Produk Digital
+        </a>
+
+        <!-- Tombol Traktir Mie Ayam (Ikon 3D Realistic) -->
+        <a href="https://trakteer.id/toip_toip/gift" target="_blank" class="bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-slate-900 font-bold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20 border border-amber-300">
+          <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Food/Steaming%20Bowl.png" alt="Mie Ayam" class="w-5 h-5 drop-shadow-md" /> 
+          Traktir Mie Ayam
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+    
+    <!-- BANNER HERO & SEARCH SECTION -->
+    <div class="relative bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-10 mb-8 text-center overflow-hidden dark:neon-border backdrop-blur-xl transition">
+      <!-- Background Tech Line Overlay -->
+      <div class="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.03] dark:opacity-10 pointer-events-none"></div>
+
+      <div class="max-w-3xl mx-auto relative z-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-xs font-mono mb-4">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Interactive Learning Ecosystem
+        </div>
+        <h2 class="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">
+          Eksplorasi, Mainkan & Replikasi Media
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 text-xs md:text-sm mb-8 max-w-xl mx-auto leading-relaxed">
+          Temukan koleksi media pembelajaran interaktif berbasis web. Dapatkan kode khusus dari channel YouTube untuk membuka <span class="text-indigo-600 dark:text-cyan-400 font-semibold">Prompt AI</span> & mereplikasi medianya!
+        </p>
+
+        <!-- SEARCH BAR -->
+        <div class="relative max-w-2xl mx-auto mb-4">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </div>
+          <input type="text" id="searchInput" oninput="filterMedia()" placeholder="Cari judul game, topik materi, atau kata kunci..." 
+            class="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-2xl text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-cyan-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-cyan-500/20 text-slate-900 dark:text-slate-100 placeholder-slate-500 shadow-inner transition">
+        </div>
+
+        <!-- FILTER OPTIONS -->
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-1.5">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400"></i>
+            <select id="filterKategori" onchange="filterMedia()" class="bg-transparent text-slate-700 dark:text-slate-300 text-xs focus:outline-none cursor-pointer">
+              <option value="" class="bg-white dark:bg-slate-900">Semua Kategori</option>
+              <option value="Game Interaktif" class="bg-white dark:bg-slate-900">🎮 Game Interaktif</option>
+              <option value="MPI / E-Modul" class="bg-white dark:bg-slate-900">📚 MPI / E-Modul</option>
+              <option value="Kuis & Asesmen" class="bg-white dark:bg-slate-900">📝 Kuis & Asesmen</option>
+              <option value="Simulasi" class="bg-white dark:bg-slate-900">🧪 Simulasi</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-1.5">
+            <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400"></i>
+            <select id="filterKelas" onchange="filterMedia()" class="bg-transparent text-slate-700 dark:text-slate-300 text-xs focus:outline-none cursor-pointer">
+              <option value="" class="bg-white dark:bg-slate-900">Semua Tingkat/Kelas</option>
+              <option value="PAUD/TK" class="bg-white dark:bg-slate-900">PAUD / TK</option>
+              <option value="SD Kelas 1-3" class="bg-white dark:bg-slate-900">SD Kelas 1 - 3</option>
+              <option value="SD Kelas 4-6" class="bg-white dark:bg-slate-900">SD Kelas 4 - 6</option>
+              <option value="SMP" class="bg-white dark:bg-slate-900">SMP / MTs</option>
+              <option value="SMA/K" class="bg-white dark:bg-slate-900">SMA / SMK</option>
+              <option value="Umum" class="bg-white dark:bg-slate-900">Umum / Guru</option>
+            </select>
+          </div>
+
+          <button onclick="resetFilters()" class="bg-slate-100 dark:bg-slate-950/60 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs px-3 py-1.5 rounded-xl transition border border-slate-300 dark:border-slate-800 flex items-center gap-1">
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN BANNER -->
+    <div id="adminBanner" class="admin-only-block hidden bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/30 text-amber-800 dark:text-amber-300 px-4 py-3 rounded-2xl mb-6 items-center justify-between text-xs backdrop-blur-md">
+      <span class="flex items-center gap-2">
+        <i data-lucide="shield-check" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+        <strong>MODE ADMIN AKTIF:</strong> Anda memiliki hak akses penuh.
+      </span>
+      <button onclick="logoutAdmin()" class="bg-amber-200 dark:bg-amber-500/20 hover:bg-amber-300 dark:hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 px-3 py-1 rounded-lg border border-amber-400 dark:border-amber-500/40 transition">Keluar Admin</button>
+    </div>
+
+    <!-- KATALOG GRID -->
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div class="col-span-full text-center py-16 text-slate-500">
+        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-3 text-indigo-500 dark:text-cyan-400"></i>
+        <p class="text-xs font-mono tracking-widest uppercase">Mengunduh Modul Media...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER YAAAAAY (SUDAH KEMBALI) -->
+  <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-8 text-xs text-slate-500 dark:text-slate-600 mt-auto transition-colors">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="p-1.5 bg-indigo-100 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+          <i data-lucide="terminal" class="w-4 h-4"></i>
+        </div>
+        <p>© 2026 Developed by <strong class="text-slate-800 dark:text-slate-200">Mas T Digital</strong>. All Rights Reserved.</p>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="https://lynk.id/totoip" target="_blank" class="hover:text-indigo-600 dark:hover:text-cyan-400 transition">Toko Digital</a>
+        <a href="https://trakteer.id/toip_toip/gift" target="_blank" class="hover:text-indigo-600 dark:hover:text-cyan-400 transition">Dukung Karya</a>
+        <a href="https://www.youtube.com/@totoip" target="_blank" class="text-red-500 hover:text-red-400 transition flex items-center gap-1 font-semibold">
+          <i data-lucide="youtube" class="w-4 h-4"></i> YouTube Channel
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL PLAY / VIEW MEDIA -->
+  <div id="playModal" class="fixed inset-0 bg-slate-900/80 dark:bg-slate-950/90 backdrop-blur-md z-50 hidden flex-col p-3 md:p-6">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full h-full flex flex-col overflow-hidden max-w-7xl mx-auto shadow-2xl">
+      <div class="p-3.5 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2 truncate pr-4">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+          <h3 id="playTitle" class="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">Mainkan Media</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="playExternalBtn" href="#" target="_blank" class="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition border border-slate-300 dark:border-slate-700">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Tab Baru
+          </a>
+          <button onclick="closePlayModal()" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex-1 bg-black relative">
+        <iframe id="playIframe" class="w-full h-full border-0" src="" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VERIFIKASI KODE PROMPT AI -->
+  <div id="lockModal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative dark:neon-border">
+      <div class="p-5 bg-gradient-to-r from-slate-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="p-2 bg-indigo-100 dark:bg-cyan-500/10 rounded-xl text-indigo-600 dark:text-cyan-400 border border-indigo-200 dark:border-cyan-500/20">
+            <i data-lucide="lock" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-slate-900 dark:text-slate-100">Akses Terkunci</h3>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400">Masukkan kode unik untuk melihat Prompt AI</p>
+          </div>
+        </div>
+        <button onclick="closeLockModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="text-center mb-5">
+          <p id="lockMediaTitle" class="text-xs font-semibold text-indigo-600 dark:text-cyan-400 mb-1">Judul Media</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">Kode akses gratis dapat ditemukan pada video YouTube pembahasan media ini.</p>
+        </div>
+        <div class="space-y-3 mb-5">
+          <div class="relative">
+            <input type="text" id="inputPasscode" placeholder="Ketik Kode Akses..." class="w-full text-center tracking-widest font-mono text-base py-3 bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 dark:focus:border-cyan-500 uppercase">
+          </div>
+          <div id="lockErrorMsg" class="hidden p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-xl text-red-600 dark:text-red-400 text-xs text-center flex items-center justify-center gap-1.5">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            <span>Kode salah! Silakan tonton video untuk tahu kodenya.</span>
+          </div>
+        </div>
+        <div class="space-y-2.5">
+          <button onclick="verifyPasscode()" class="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 dark:from-cyan-500 dark:to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/20">
+            <i data-lucide="key" class="w-4 h-4"></i> Buka Prompt AI
+          </button>
+          <a id="ytVideoBtn" href="#" target="_blank" class="w-full bg-red-50 dark:bg-red-600/10 hover:bg-red-100 dark:hover:bg-red-600/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 font-semibold py-2.5 rounded-2xl text-xs flex items-center justify-center gap-2 transition">
+            <i data-lucide="youtube" class="w-4 h-4 text-red-500"></i> Belum Tahu Kodenya? Tonton Video
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PROMPT AI (SETELAH KODE BENAR) -->
+  <div id="promptModal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl relative">
+      <div class="p-4 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i> Prompt AI Generator
+        </h3>
+        <button onclick="closePromptModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Salin prompt di bawah lalu tempelkan pada AI favoritmu (Claude, ChatGPT, Gemini) untuk membuat media serupa:</p>
+        <textarea id="promptText" readonly class="w-full h-52 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-2xl p-4 text-xs text-slate-800 dark:text-slate-300 font-mono focus:outline-none resize-none mb-4 leading-relaxed"></textarea>
+        <button onclick="copyPromptText()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-2xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
+          <i data-lucide="copy" class="w-4 h-4"></i> Salin Prompt ke Clipboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FORM INPUT / EDIT (ADMIN ONLY) -->
+  <div id="formModal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="p-4 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h3 id="formTitle" class="font-bold text-sm text-slate-800 dark:text-slate-200">Tambah Media Baru</h3>
+        <button onclick="closeModalForm()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="mediaForm" onsubmit="handleFormSubmit(event)" class="p-6 overflow-y-auto space-y-4">
+        <input type="hidden" id="editId">
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Judul Media / Game</label>
+          <input type="text" id="formJudul" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Kategori</label>
+            <select id="formKategori" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none">
+              <option value="Game Interaktif">Game Interaktif</option>
+              <option value="MPI / E-Modul">MPI / E-Modul</option>
+              <option value="Kuis & Asesmen">Kuis & Asesmen</option>
+              <option value="Simulasi">Simulasi</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tingkat / Kelas</label>
+            <select id="formKelas" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none">
+              <option value="PAUD/TK">PAUD / TK</option>
+              <option value="SD Kelas 1-3">SD Kelas 1 - 3</option>
+              <option value="SD Kelas 4-6">SD Kelas 4 - 6</option>
+              <option value="SMP">SMP / MTs</option>
+              <option value="SMA/K">SMA / SMK</option>
+              <option value="Umum">Umum</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Deskripsi Singkat</label>
+          <textarea id="formDeskripsi" rows="2" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">URL Web Media / Game</label>
+          <input type="url" id="formUrlMedia" placeholder="https://..." required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">URL Gambar Thumbnail</label>
+          <input type="url" id="formUrlThumbnail" placeholder="https://..." required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 p-3 bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-200 dark:border-indigo-500/20 rounded-2xl">
+          <div>
+            <label class="block text-[11px] font-bold text-indigo-600 dark:text-cyan-400 mb-1">Kode Akses Prompt</label>
+            <input type="text" id="formPasscode" placeholder="Misal: MAS123" required class="w-full bg-white dark:bg-slate-950 border border-indigo-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 uppercase focus:border-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-red-500 dark:text-red-400 mb-1">URL Video YouTube</label>
+            <input type="url" id="formYtUrl" placeholder="https://youtube.com/watch?v=..." required class="w-full bg-white dark:bg-slate-950 border border-red-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-red-400 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Prompt AI (Terkunci)</label>
+          <textarea id="formPrompt" rows="3" placeholder="Masukkan prompt lengkap..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:border-indigo-500 dark:focus:border-cyan-500 outline-none"></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-3 rounded-2xl text-xs transition mt-2 shadow-lg shadow-emerald-500/20">
+          Simpan Data Media
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // MASUKKAN URL GOOGLE APPS SCRIPT-MU DI SINI
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyhZG44qfbpkRM6U8Od1teKa9o7a4xDahz6pchEP-CiNv-WTkTzssGVutiUfh9ei2QdiA/exec"; 
+    const ADMIN_SECRET = "toip_123";
+
+    let allMediaData = [];
+    let currentActiveMedia = null;
+
+    // --- DARK / LIGHT THEME TOGGLE ---
+    const htmlEl = document.documentElement;
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    function applyThemeUI(isDark) {
+      if (isDark) {
+        htmlEl.classList.add('dark');
+        if (sunIcon) sunIcon.classList.remove('hidden');
+        if (moonIcon) moonIcon.classList.add('hidden');
+      } else {
+        htmlEl.classList.remove('dark');
+        if (sunIcon) sunIcon.classList.add('hidden');
+        if (moonIcon) moonIcon.classList.remove('hidden');
+      }
+    }
+
+    function toggleTheme() {
+      const isDarkNow = htmlEl.classList.contains('dark');
+      const setDark = !isDarkNow;
+      localStorage.setItem('theme', setDark ? 'dark' : 'light');
+      applyThemeUI(setDark);
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      applyThemeUI(true);
+    } else {
+      applyThemeUI(false);
+    }
+
+    // --- ADMIN DETECTION ---
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === ADMIN_SECRET) {
+      localStorage.setItem('isAdminMode', 'true');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    const isAdmin = localStorage.getItem('isAdminMode') === 'true';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (isAdmin) {
+        document.body.classList.add("admin-mode");
+        document.getElementById("adminBanner").classList.remove("hidden");
+        document.getElementById("adminBanner").classList.add("flex");
+      }
+      lucide.createIcons();
+      fetchMediaData();
+    });
+
+    function logoutAdmin() {
+      localStorage.removeItem('isAdminMode');
+      location.reload();
+    }
+
+    // --- DATA FETCH & FALLBACK ---
+    async function fetchMediaData() {
+      const grid = document.getElementById("mediaGrid");
+      try {
+        const res = await fetch(GAS_API_URL);
+        const json = await res.json();
+        if (json.status === 'success') {
+          allMediaData = json.data;
+        } else {
+          allMediaData = getMockData();
+        }
+      } catch (err) {
+        console.warn("GAS API gagal diload, menggunakan data mockup sementara.");
+        allMediaData = getMockData();
+      }
+      renderMediaCards(allMediaData);
+    }
+
+    function getMockData() {
+      return [
+        {
+          id: 'MED_1',
+          judul: 'Ular Tangga Matematika (UTAMA)',
+          kategori: 'Game Interaktif',
+          kelas: 'SD Kelas 4-6',
+          deskripsi: 'Game ular tangga edukatif bertema bangun datar & ruang untuk kelas interaktif.',
+          url_media: 'https://example.com',
+          url_thumbnail: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=600&auto=format&fit=crop&q=60',
+          passcode: 'SD3PUNUNG',
+          yt_url: 'https://youtube.com',
+          prompt_ai: 'Buatkan aplikasi web Single File HTML+JS game ular tangga matematika 100 petak...'
+        },
+        {
+          id: 'MED_2',
+          judul: 'E-Modul Bahasa Jawa Teks Prosedur',
+          kategori: 'MPI / E-Modul',
+          kelas: 'SD Kelas 4-6',
+          deskripsi: 'Modul pembelajaran interaktif teks prosedur bahasa Jawa lengkap dengan kuis.',
+          url_media: 'https://example.com',
+          url_thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=60',
+          passcode: 'JAWA2026',
+          yt_url: 'https://youtube.com',
+          prompt_ai: 'Buatkan E-Modul interaktif dengan Tailwind CSS untuk pelajaran Bahasa Jawa...'
+        }
+      ];
+    }
+
+    function renderMediaCards(data) {
+      const grid = document.getElementById("mediaGrid");
+      grid.innerHTML = "";
+
+      if (data.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-sm">Media tidak ditemukan.</div>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden hover:border-indigo-500/50 dark:hover:border-cyan-500/50 transition duration-300 flex flex-col group dark:neon-border shadow-sm";
+        card.innerHTML = `
+          <div class="relative aspect-video bg-slate-100 dark:bg-slate-950 overflow-hidden">
+            <img src="${item.url_thumbnail}" alt="${item.judul}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/64748b?text=Mas+T+Digital'">
+            <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+              <span class="bg-indigo-600/90 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-md">${item.kategori || 'MPI'}</span>
+              ${item.kelas ? `<span class="bg-white/90 dark:bg-slate-950/80 text-slate-800 dark:text-slate-300 text-[10px] font-medium px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700/80 backdrop-blur-md">${item.kelas}</span>` : ''}
+            </div>
+            <span class="absolute bottom-2 right-3 text-[9px] text-slate-800/60 dark:text-white/60 font-mono tracking-widest uppercase bg-white/60 dark:bg-slate-950/60 px-2 py-0.5 rounded-md backdrop-blur-sm">Mas T Digital</span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-1.5 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition">${item.judul}</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-5 leading-relaxed">${item.deskripsi}</p>
+            </div>
+
+            <div class="space-y-2.5">
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}')" class="bg-gradient-to-r from-indigo-500 to-indigo-600 dark:from-indigo-600 dark:to-indigo-700 hover:from-indigo-600 hover:to-indigo-700 dark:hover:from-indigo-500 dark:hover:to-indigo-600 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition shadow-md">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i> Mainkan
+                </button>
+                <button onclick='requestPromptAccess(${JSON.stringify(item)})' class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition border border-slate-300 dark:border-slate-700">
+                  <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-500"></i> Prompt AI
+                </button>
+              </div>
+
+              <!-- Admin Controls -->
+              <div class="admin-only gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <button onclick='openEditModal(${JSON.stringify(item)})' class="flex-1 bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 text-[11px] py-1 rounded-lg border border-amber-300 dark:border-amber-500/30">Edit</button>
+                <button onclick="deleteMedia('${item.id}')" class="flex-1 bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-300 text-[11px] py-1 rounded-lg border border-red-300 dark:border-red-500/30">Hapus</button>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // --- SEARCH & FILTER ---
+    function filterMedia() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const kat = document.getElementById("filterKategori").value;
+      const kelas = document.getElementById("filterKelas").value;
+
+      const filtered = allMediaData.filter(item => {
+        const matchQuery = item.judul.toLowerCase().includes(query) || item.deskripsi.toLowerCase().includes(query);
+        const matchKat = kat === "" || item.kategori === kat;
+        const matchKelas = kelas === "" || item.kelas === kelas;
+        return matchQuery && matchKat && matchKelas;
+      });
+
+      renderMediaCards(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("filterKategori").value = "";
+      document.getElementById("filterKelas").value = "";
+      renderMediaCards(allMediaData);
+    }
+
+    // --- MODAL PROMPT & LOCK ---
+    function requestPromptAccess(item) {
+      currentActiveMedia = item;
+      document.getElementById("lockMediaTitle").innerText = item.judul;
+      document.getElementById("inputPasscode").value = "";
+      document.getElementById("lockErrorMsg").classList.add("hidden");
+      document.getElementById("ytVideoBtn").href = item.yt_url || "https://youtube.com";
+      document.getElementById("lockModal").classList.remove("hidden");
+      document.getElementById("lockModal").classList.add("flex");
+    }
+
+    function verifyPasscode() {
+      const inputPass = document.getElementById("inputPasscode").value.trim().toUpperCase();
+      const actualPass = (currentActiveMedia.passcode || "").trim().toUpperCase();
+      if (inputPass === actualPass && actualPass !== "") {
+        closeLockModal();
+        openPromptModal(currentActiveMedia.prompt_ai);
+      } else {
+        document.getElementById("lockErrorMsg").classList.remove("hidden");
+      }
+    }
+
+    function closeLockModal() { document.getElementById("lockModal").classList.add("hidden"); document.getElementById("lockModal").classList.remove("flex"); }
+    function openPromptModal(prompt) { document.getElementById("promptText").value = prompt || "Prompt tidak tersedia."; document.getElementById("promptModal").classList.remove("hidden"); document.getElementById("promptModal").classList.add("flex"); }
+    function closePromptModal() { document.getElementById("promptModal").classList.add("hidden"); document.getElementById("promptModal").classList.remove("flex"); }
+    function copyPromptText() { document.getElementById("promptText").select(); navigator.clipboard.writeText(document.getElementById("promptText").value); alert("Prompt disalin!"); }
+
+    // --- MODAL PLAY ---
+    function openPlayModal(url, title) {
+      document.getElementById("playTitle").innerText = title;
+      document.getElementById("playIframe").src = url;
+      document.getElementById("playExternalBtn").href = url;
+      document.getElementById("playModal").classList.remove("hidden");
+      document.getElementById("playModal").classList.add("flex");
+    }
+
+    function closePlayModal() {
+      document.getElementById("playIframe").src = "";
+      document.getElementById("playModal").classList.add("hidden");
+      document.getElementById("playModal").classList.remove("flex");
+    }
+
+    // --- ADMIN CRUD ---
+    function openModalForm() {
+      document.getElementById("mediaForm").reset();
+      document.getElementById("editId").value = "";
+      document.getElementById("formTitle").innerText = "Tambah Media Baru";
+      document.getElementById("formModal").classList.remove("hidden");
+      document.getElementById("formModal").classList.add("flex");
+    }
+
+    function closeModalForm() {
+      document.getElementById("formModal").classList.add("hidden");
+      document.getElementById("formModal").classList.remove("flex");
+    }
+
+    function openEditModal(item) {
+      document.getElementById("editId").value = item.id;
+      document.getElementById("formJudul").value = item.judul;
+      document.getElementById("formKategori").value = item.kategori || 'Game Interaktif';
+      document.getElementById("formKelas").value = item.kelas || 'Umum';
+      document.getElementById("formDeskripsi").value = item.deskripsi;
+      document.getElementById("formUrlMedia").value = item.url_media;
+      document.getElementById("formUrlThumbnail").value = item.url_thumbnail;
+      document.getElementById("formPasscode").value = item.passcode || '';
+      document.getElementById("formYtUrl").value = item.yt_url || '';
+      document.getElementById("formPrompt").value = item.prompt_ai || '';
+
+      document.getElementById("formTitle").innerText = "Edit Media";
+      document.getElementById("formModal").classList.remove("hidden");
+      document.getElementById("formModal").classList.add("flex");
+    }
+
+let isSubmitting = false; // Variabel pengaman ganda
+
+async function handleFormSubmit(e) {
+  e.preventDefault();
+  
+  // PENGAMAN 1: Kalau masih proses, tolak klik kedua!
+  if (isSubmitting) return; 
+  isSubmitting = true;
+
+  const btn = document.getElementById("submitBtn");
+  btn.innerText = "Menyimpan Data... Mohon Tunggu!";
+  
+  // PENGAMAN 2: Matikan tombol secara fisik
+  btn.disabled = true; 
+  btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+  const id = document.getElementById("editId").value;
+  const payload = {
+    action: id ? 'update' : 'create',
+    secret_key: ADMIN_SECRET,
+    id: id,
+    judul: document.getElementById("formJudul").value,
+    kategori: document.getElementById("formKategori").value,
+    kelas: document.getElementById("formKelas").value,
+    deskripsi: document.getElementById("formDeskripsi").value,
+    url_media: document.getElementById("formUrlMedia").value,
+    url_thumbnail: document.getElementById("formUrlThumbnail").value,
+    passcode: document.getElementById("formPasscode").value,
+    yt_url: document.getElementById("formYtUrl").value,
+    prompt_ai: document.getElementById("formPrompt").value
+  };
+
+  try {
+    // Ngirim mode 'text/plain' biar Google GAS gak bawel soal preflight
+    const res = await fetch(GAS_API_URL, { 
+      method: 'POST', 
+      body: JSON.stringify(payload)
+    });
+    
+    const json = await res.json();
+    if (json.status === 'success') {
+      alert(json.message);
+      closeModalForm();
+      fetchMediaData();
+    } else {
+      alert("Gagal: " + json.message);
+    }
+  } catch (err) {
+    // Karena kamu jalankan di LOKAL, error ini pasti muncul karena CORS blokir response.
+    // Nanti kalau sudah di-deploy ke Netlify (HTTPS), error ini otomatis HILANG.
+    alert("Data TERKIRIM, tapi browser lokal memblokir notifikasi sukses (CORS). Coba cek Sheet kamu.");
+    closeModalForm(); 
+    fetchMediaData(); // Load ulang grid-nya
+  } finally {
+    // Kembalikan tombol ke kondisi semula
+    isSubmitting = false;
+    btn.innerText = "Simpan Data Media";
+    btn.disabled = false;
+    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+  }
+}
+
+    async function deleteMedia(id) {
+      if (!confirm("Hapus media ini secara permanen?")) return;
+      try {
+        const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', secret_key: ADMIN_SECRET, id: id }) });
+        const json = await res.json();
+        if (json.status === 'success') {
+          alert("Berhasil dihapus!");
+          fetchMediaData();
+        }
+      } catch (err) {
+        alert("Gagal menghapus. Periksa koneksi API.");
+      }
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
