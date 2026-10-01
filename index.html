@@ -210,6 +210,51 @@
     </div>
   </footer>
 
+<!-- MODAL DETAIL MEDIA (BACA DESKRIPSI LENGKAP) -->
+  <div id="detailModal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative dark:neon-border flex flex-col max-h-[90vh]">
+      
+      <!-- Header Modal -->
+      <div class="p-4 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between sticky top-0 z-10">
+        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-indigo-600 dark:text-cyan-400"></i> Detail Media
+        </h3>
+        <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded-xl transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Body Modal (Bisa di-scroll kalau teks panjang) -->
+      <div class="overflow-y-auto">
+        <!-- Thumbnail Besar -->
+        <div class="relative w-full aspect-video bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
+          <img id="detailThumb" src="" class="w-full h-full object-cover" alt="Thumbnail">
+          <div class="absolute top-4 left-4 flex gap-2">
+            <span id="detailKat" class="bg-indigo-600/90 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md"></span>
+            <span id="detailKelas" class="bg-white/90 dark:bg-slate-950/80 text-slate-800 dark:text-slate-300 text-xs font-medium px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700/80 backdrop-blur-md"></span>
+          </div>
+        </div>
+        
+        <div class="p-6 md:p-8">
+          <h2 id="detailTitle" class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-3"></h2>
+          <div class="w-12 h-1.5 bg-indigo-500 dark:bg-cyan-400 rounded-full mb-5"></div>
+          
+          <p id="detailDesc" class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-8 whitespace-pre-wrap"></p>
+          
+          <!-- Tombol Aksi di Dalam Detail -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-5 border-t border-slate-200 dark:border-slate-800">
+            <button id="btnDetailPlay" class="bg-gradient-to-r from-indigo-500 to-indigo-600 dark:from-indigo-600 dark:to-indigo-700 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition shadow-lg">
+              <i data-lucide="play" class="w-4 h-4"></i> Mainkan Sekarang
+            </button>
+            <button id="btnDetailPrompt" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition border border-slate-300 dark:border-slate-700">
+              <i data-lucide="lock" class="w-4 h-4 text-amber-500"></i> Buka Prompt AI
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL PLAY / VIEW MEDIA -->
   <div id="playModal" class="fixed inset-0 bg-slate-900/80 dark:bg-slate-950/90 backdrop-blur-md z-50 hidden flex-col p-3 md:p-6">
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full h-full flex flex-col overflow-hidden max-w-7xl mx-auto shadow-2xl">
@@ -481,7 +526,7 @@ async function fetchMediaData() {
 
     // CATATAN PENTING: Hapus sepenuhnya fungsi getMockData() dari kode kamu!
 
-    function renderMediaCards(data) {
+function renderMediaCards(data) {
       const grid = document.getElementById("mediaGrid");
       grid.innerHTML = "";
 
@@ -494,15 +539,25 @@ async function fetchMediaData() {
         const card = document.createElement("div");
         card.className = "bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden hover:border-indigo-500/50 dark:hover:border-cyan-500/50 transition duration-300 flex flex-col group dark:neon-border shadow-sm";
         card.innerHTML = `
-          <div class="relative aspect-video bg-slate-100 dark:bg-slate-950 overflow-hidden">
-            <img src="${item.url_thumbnail}" alt="${item.judul}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/64748b?text=Mas+T+Digital'">
-            <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+          <!-- THUMBNAIL BISA DIKLIK (BUKA DETAIL) -->
+          <div class="relative aspect-video bg-slate-100 dark:bg-slate-950 overflow-hidden cursor-pointer group/thumb" onclick="openDetailModal('${item.id}')">
+            <img src="${item.url_thumbnail}" alt="${item.judul}" class="w-full h-full object-cover group-hover/thumb:scale-110 transition duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/64748b?text=Mas+T+Digital'">
+            
+            <!-- Efek Hover Overlay -->
+            <div class="absolute inset-0 bg-slate-900/0 group-hover/thumb:bg-slate-900/50 transition duration-300 flex items-center justify-center z-10">
+              <span class="opacity-0 group-hover/thumb:opacity-100 bg-white/20 backdrop-blur-md text-white text-xs font-bold px-4 py-2 rounded-xl border border-white/30 transition transform translate-y-3 group-hover/thumb:translate-y-0 flex items-center gap-1.5 shadow-xl">
+                <i data-lucide="info" class="w-4 h-4"></i> Lihat Detail
+              </span>
+            </div>
+
+            <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-20">
               <span class="bg-indigo-600/90 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-md">${item.kategori || 'MPI'}</span>
               ${item.kelas ? `<span class="bg-white/90 dark:bg-slate-950/80 text-slate-800 dark:text-slate-300 text-[10px] font-medium px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700/80 backdrop-blur-md">${item.kelas}</span>` : ''}
             </div>
-            <span class="absolute bottom-2 right-3 text-[9px] text-slate-800/60 dark:text-white/60 font-mono tracking-widest uppercase bg-white/60 dark:bg-slate-950/60 px-2 py-0.5 rounded-md backdrop-blur-sm">Mas T Digital</span>
+            <span class="absolute bottom-2 right-3 text-[9px] text-white font-mono tracking-widest uppercase bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-sm z-20">Mas T Digital</span>
           </div>
 
+          <!-- KONTEN TEKS & TOMBOL AKSES CEPAT -->
           <div class="p-5 flex-1 flex flex-col justify-between">
             <div>
               <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-1.5 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition">${item.judul}</h3>
@@ -511,17 +566,17 @@ async function fetchMediaData() {
 
             <div class="space-y-2.5">
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}')" class="bg-gradient-to-r from-indigo-500 to-indigo-600 dark:from-indigo-600 dark:to-indigo-700 hover:from-indigo-600 hover:to-indigo-700 dark:hover:from-indigo-500 dark:hover:to-indigo-600 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition shadow-md">
+                <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}')" class="bg-gradient-to-r from-indigo-500 to-indigo-600 dark:from-indigo-600 dark:to-indigo-700 hover:from-indigo-600 hover:to-indigo-700 dark:hover:from-indigo-500 dark:hover:to-indigo-600 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition shadow-md relative z-20">
                   <i data-lucide="play" class="w-3.5 h-3.5"></i> Mainkan
                 </button>
-                <button onclick='requestPromptAccess(${JSON.stringify(item)})' class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition border border-slate-300 dark:border-slate-700">
+                <button onclick='requestPromptAccessById("${item.id}")' class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition border border-slate-300 dark:border-slate-700 relative z-20">
                   <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-500"></i> Prompt AI
                 </button>
               </div>
 
               <!-- Admin Controls -->
               <div class="admin-only gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-                <button onclick='openEditModal(${JSON.stringify(item)})' class="flex-1 bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 text-[11px] py-1 rounded-lg border border-amber-300 dark:border-amber-500/30">Edit</button>
+                <button onclick='openEditModalById("${item.id}")' class="flex-1 bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 text-[11px] py-1 rounded-lg border border-amber-300 dark:border-amber-500/30">Edit</button>
                 <button onclick="deleteMedia('${item.id}')" class="flex-1 bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-300 text-[11px] py-1 rounded-lg border border-red-300 dark:border-red-500/30">Hapus</button>
               </div>
             </div>
@@ -706,6 +761,50 @@ async function handleFormSubmit(e) {
 
     function escapeHtml(text) {
       return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+	
+// --- LOGIKA MODAL DETAIL MEDIA ---
+    function openDetailModal(id) {
+      const item = allMediaData.find(m => m.id === id);
+      if(!item) return;
+      
+      // Isi konten dalam Modal Detail
+      document.getElementById('detailThumb').src = item.url_thumbnail;
+      document.getElementById('detailKat').innerText = item.kategori || 'MPI';
+      document.getElementById('detailKelas').innerText = item.kelas || '-';
+      document.getElementById('detailTitle').innerText = item.judul;
+      document.getElementById('detailDesc').innerText = item.deskripsi;
+      
+      // Sinkronkan Tombol Mainkan & Prompt di dalam Modal Detail
+      document.getElementById('btnDetailPlay').onclick = () => {
+        closeDetailModal();
+        openPlayModal(item.url_media, escapeHtml(item.judul));
+      };
+      
+      document.getElementById('btnDetailPrompt').onclick = () => {
+        closeDetailModal();
+        requestPromptAccessById(item.id);
+      };
+      
+      // Tampilkan Modal
+      document.getElementById('detailModal').classList.remove('hidden');
+      document.getElementById('detailModal').classList.add('flex');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+      document.getElementById('detailModal').classList.remove('flex');
+    }
+
+    // HELPER UNTUK MENGHINDARI ERROR STRINGIFY HTML
+    function requestPromptAccessById(id) {
+      const item = allMediaData.find(m => m.id === id);
+      if(item) requestPromptAccess(item); // Memanggil fungsi bawaan yang sudah ada
+    }
+
+    function openEditModalById(id) {
+      const item = allMediaData.find(m => m.id === id);
+      if(item) openEditModal(item); // Memanggil fungsi bawaan admin yang sudah ada
     }
   </script>
 </body>
