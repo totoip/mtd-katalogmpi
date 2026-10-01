@@ -440,51 +440,46 @@
     }
 
     // --- DATA FETCH & FALLBACK ---
-    async function fetchMediaData() {
+async function fetchMediaData() {
       const grid = document.getElementById("mediaGrid");
+      grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500">
+        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-3 text-indigo-500 dark:text-cyan-400"></i>
+        <p class="text-xs font-mono tracking-widest uppercase">Mengunduh Modul Media...</p>
+      </div>`;
+      lucide.createIcons();
+
       try {
-        const res = await fetch(GAS_API_URL);
+        // Tambahkan { redirect: "follow" } karena GAS selalu me-redirect URL API-nya
+        const res = await fetch(GAS_API_URL, { redirect: "follow" });
+        
+        if (!res.ok) {
+          throw new Error("HTTP error! status: " + res.status);
+        }
+
         const json = await res.json();
+        
         if (json.status === 'success') {
           allMediaData = json.data;
+          renderMediaCards(allMediaData);
         } else {
-          allMediaData = getMockData();
+          // Kalau GAS error (misal database belum di-setup)
+          grid.innerHTML = `<div class="col-span-full text-center py-12 text-red-500 text-sm font-semibold">Error Server: ${json.message}</div>`;
         }
       } catch (err) {
-        console.warn("GAS API gagal diload, menggunakan data mockup sementara.");
-        allMediaData = getMockData();
+        console.error("Error Detail:", err);
+        // Tampilkan pesan error ASLI, jangan tampilkan data ular tangga lagi!
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-slate-500 flex flex-col items-center">
+            <i data-lucide="alert-triangle" class="w-10 h-10 text-red-500/80 mb-3"></i>
+            <p class="text-red-400 font-bold mb-1">Gagal Terhubung ke Database!</p>
+            <p class="text-xs">Pastikan URL GAS sudah benar dan hak akses di-set ke "Siapa Saja (Anyone)".</p>
+          </div>
+        `;
+        lucide.createIcons();
       }
-      renderMediaCards(allMediaData);
     }
 
-    function getMockData() {
-      return [
-        {
-          id: 'MED_1',
-          judul: 'Ular Tangga Matematika (UTAMA)',
-          kategori: 'Game Interaktif',
-          kelas: 'SD Kelas 4-6',
-          deskripsi: 'Game ular tangga edukatif bertema bangun datar & ruang untuk kelas interaktif.',
-          url_media: 'https://example.com',
-          url_thumbnail: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=600&auto=format&fit=crop&q=60',
-          passcode: 'SD3PUNUNG',
-          yt_url: 'https://youtube.com',
-          prompt_ai: 'Buatkan aplikasi web Single File HTML+JS game ular tangga matematika 100 petak...'
-        },
-        {
-          id: 'MED_2',
-          judul: 'E-Modul Bahasa Jawa Teks Prosedur',
-          kategori: 'MPI / E-Modul',
-          kelas: 'SD Kelas 4-6',
-          deskripsi: 'Modul pembelajaran interaktif teks prosedur bahasa Jawa lengkap dengan kuis.',
-          url_media: 'https://example.com',
-          url_thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=60',
-          passcode: 'JAWA2026',
-          yt_url: 'https://youtube.com',
-          prompt_ai: 'Buatkan E-Modul interaktif dengan Tailwind CSS untuk pelajaran Bahasa Jawa...'
-        }
-      ];
-    }
+    // CATATAN PENTING: Hapus sepenuhnya fungsi getMockData() dari kode kamu!
 
     function renderMediaCards(data) {
       const grid = document.getElementById("mediaGrid");
