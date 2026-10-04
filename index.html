@@ -22,7 +22,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
-    /* Custom Tech Grid Pattern (Dikembalikan ke versi simple dots yang elegan) */
+    /* Custom Tech Grid Pattern */
     .bg-tech-pattern {
       background-image: radial-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px);
       background-size: 24px 24px;
@@ -100,10 +100,8 @@
 
   <!-- HERO SECTION (SLIDER DENGAN GAMBAR BACKGROUND) -->
   <section class="relative py-10 md:py-16 overflow-hidden bg-slate-900" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed;">
-    
-    <!-- Overlay Gelap (Biar gambar background nyatu dan teks tetap jelas) -->
+    <!-- Overlay Gelap -->
     <div class="absolute inset-0 bg-slate-900/80 dark:bg-slate-950/90 backdrop-blur-[2px] z-0"></div>
-    
     <!-- Background Decor Tambahan -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 pointer-events-none z-0"></div>
 
@@ -118,7 +116,6 @@
       <!-- WADAH SLIDER -->
       <div class="relative">
         <div id="sliderGrid" class="flex overflow-x-auto gap-5 snap-x snap-mandatory no-scrollbar scroll-smooth pb-8" style="-webkit-overflow-scrolling: touch;">
-          <!-- Loading State -->
           <div class="w-full text-center py-12 text-slate-400">
             <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-blue-400"></i>
           </div>
@@ -146,7 +143,6 @@
 
       <!-- SEARCH BAR & FILTER JENJANG -->
       <div class="flex flex-col sm:flex-row w-full md:w-auto gap-3 relative">
-        <!-- Dropdown Filter Kelas -->
         <div class="relative w-full sm:w-44">
           <i data-lucide="graduation-cap" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
           <select id="filterKelas" onchange="filterMedia()" class="w-full bg-white dark:bg-slate-900 text-sm rounded-2xl py-3.5 pl-11 pr-8 border border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-cyan-400 outline-none transition-all shadow-sm dark:text-white appearance-none cursor-pointer">
@@ -161,7 +157,6 @@
           <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
         </div>
         
-        <!-- Input Search -->
         <div class="relative w-full sm:w-64 md:w-72">
           <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
           <input type="text" id="searchInput" oninput="filterMedia()" placeholder="Cari media, topik..." 
@@ -190,10 +185,14 @@
     </div>
 
     <!-- GRID SEMUA MEDIA -->
-    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 scroll-mt-28"></div>
+    
+    <!-- PAGINASI (Ditambahkan di Sini) -->
+    <div id="paginationControls" class="flex flex-wrap justify-center items-center gap-2 mt-4"></div>
+
   </main>
 
-  <!-- SECTION TESTIMONI / PESAN (DENGAN FILTER) -->
+  <!-- SECTION TESTIMONI / PESAN -->
   <section id="visitorSection" class="max-w-7xl mx-auto px-4 py-12 w-full hidden border-t border-slate-200 dark:border-slate-800">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
       <div class="flex items-center gap-2">
@@ -201,7 +200,6 @@
         <h2 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white">Suara Pengunjung</h2>
       </div>
       
-      <!-- Tombol Filter Testimoni -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
         <button onclick="filterPesan('Semua', this)" class="btn-filter-pesan bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-md transition">Semua</button>
         <button onclick="filterPesan('Testimoni', this)" class="btn-filter-pesan bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Testimoni</button>
@@ -209,8 +207,6 @@
         <button onclick="filterPesan('Request', this)" class="btn-filter-pesan bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Request</button>
       </div>
     </div>
-    
-    <!-- Wadah Grid Pesan -->
     <div id="pesanGrid" class="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth"></div>
   </section>
 
@@ -234,7 +230,7 @@
     </div>
   </footer>
 
-  <!-- FLOATING BUTTON (Kirim Pesan) -->
+  <!-- FLOATING BUTTON -->
   <button onclick="openPesanModal()" class="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white p-4 rounded-full shadow-2xl shadow-blue-500/40 z-40 transition transform hover:scale-110 flex items-center justify-center group">
     <i data-lucide="message-square-plus" class="w-6 h-6"></i>
     <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-sm font-bold pl-0 group-hover:pl-2">
@@ -253,6 +249,11 @@
     let allMediaData = [];
     let currentActiveMedia = null;
     let allPesanData = [];
+
+    // --- PAGINASI VARIABLES ---
+    let currentPage = 1;
+    const itemsPerPage = 12; // Ideal karena bisa dibagi untuk grid 1, 2, 3, maupun 4 kolom tanpa bolong
+    let currentFilteredData = [];
 
     // --- DARK / LIGHT THEME LOGIC ---
     const htmlEl = document.documentElement;
@@ -313,16 +314,17 @@
         const json = await res.json();
         
         if (json.status === 'success') {
-          // Asumsi data dari sheet di-push ke bawah, maka kita reverse agar terbaru di atas
           allMediaData = (json.data.media || []).reverse(); 
           allPesanData = json.data.pesan || [];
           
-          // 1. Render Preview Slider (Ambil 5 teratas)
-          const top5 = allMediaData.slice(0, 5);
-          renderSliderCards(top5);
+          // 1. Render Preview Slider (Ambil 8 teratas sesuai request)
+          const top8 = allMediaData.slice(0, 8);
+          renderSliderCards(top8);
           
-          // 2. Render Semua Media di Grid Bawah
-          renderMediaCards(allMediaData);
+          // 2. Setup Data untuk Grid (Bawah)
+          currentFilteredData = [...allMediaData];
+          currentPage = 1;
+          renderMediaCards(currentFilteredData);
           
           // 3. Render Testimoni
           renderPesanCards(allPesanData);
@@ -336,7 +338,7 @@
       }
     }
 
-    // --- RENDER SLIDER KARTU (PREVIEW 5 TERBARU) ---
+    // --- RENDER SLIDER KARTU (PREVIEW 8 TERBARU) ---
     function renderSliderCards(data) {
       const slider = document.getElementById("sliderGrid");
       slider.innerHTML = "";
@@ -365,15 +367,25 @@
       lucide.createIcons();
     }
 
-    // --- RENDER GRID KARTU (SEMUA MEDIA) ---
+    // --- RENDER GRID KARTU DENGAN PAGINASI ---
     function renderMediaCards(data) {
       const grid = document.getElementById("mediaGrid");
+      const pagination = document.getElementById("paginationControls");
+      
       grid.innerHTML = "";
+      pagination.innerHTML = "";
+
       if (data.length === 0) {
         grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-sm">Media tidak ditemukan.</div>`; return;
       }
 
-      data.forEach(item => {
+      // Hitung Paginasi
+      const totalPages = Math.ceil(data.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const currentData = data.slice(startIndex, endIndex);
+
+      currentData.forEach(item => {
         grid.innerHTML += `
           <div class="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition duration-300 flex flex-col group shadow-sm hover-lift">
             <div class="relative aspect-video bg-slate-100 dark:bg-slate-950 overflow-hidden cursor-pointer group/thumb" onclick="openDetailModal('${item.id}')">
@@ -405,35 +417,61 @@
           </div>
         `;
       });
+
+      // Render UI Paginasi
+      if (totalPages > 1) {
+        let pagHTML = '';
+        
+        // Tombol Sebelumnya
+        pagHTML += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl border ${currentPage === 1 ? 'bg-slate-50 text-slate-300 border-slate-200 cursor-not-allowed dark:bg-slate-900 dark:text-slate-700 dark:border-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700'} transition"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>`;
+        
+        // Angka Halaman
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === currentPage) {
+            pagHTML += `<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-600 text-white font-bold shadow-md shadow-blue-500/30 border border-blue-600">${i}</button>`;
+          } else {
+            pagHTML += `<button onclick="changePage(${i})" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700 font-bold transition">${i}</button>`;
+          }
+        }
+
+        // Tombol Selanjutnya
+        pagHTML += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl border ${currentPage === totalPages ? 'bg-slate-50 text-slate-300 border-slate-200 cursor-not-allowed dark:bg-slate-900 dark:text-slate-700 dark:border-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700'} transition"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>`;
+        
+        pagination.innerHTML = pagHTML;
+      }
+
       lucide.createIcons();
     }
 
-    // --- FILTER LOGIC (MENGUBAH WARNA TOMBOL AGAR JELAS) ---
+    // --- FUNGSI GANTI HALAMAN ---
+    function changePage(page) {
+      const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderMediaCards(currentFilteredData);
+      
+      // Auto-scroll halus kembali ke atas kotak media
+      document.getElementById('mediaGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // --- FILTER LOGIC ---
     let currentKategori = '';
     function filterMediaKategori(kat) {
       currentKategori = kat;
-      
-      // Reset semua tombol filter kategori
       document.querySelectorAll('.btn-filter').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md', 'shadow-blue-500/30');
         btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300', 'border-slate-300', 'dark:border-slate-700', 'border');
-        
-        // Sembunyikan icon ceklis di semua tombol
         const icon = btn.querySelector('.filter-icon');
         if(icon) icon.classList.add('hidden');
       });
 
-      // Aktifkan tombol kategori yang dipilih (Beri warna biru solid & shadow)
       const activeBtn = document.getElementById('btnFilter-' + kat);
       if (activeBtn) {
         activeBtn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300', 'border-slate-300', 'dark:border-slate-700', 'border');
         activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md', 'shadow-blue-500/30');
-        
-        // Munculkan icon di tombol aktif
         const activeIcon = activeBtn.querySelector('.filter-icon');
         if(activeIcon) activeIcon.classList.remove('hidden');
       }
-
       applyFilters();
     }
 
@@ -441,16 +479,18 @@
 
     function applyFilters() {
       const q = document.getElementById("searchInput").value.toLowerCase();
-      const kelas = document.getElementById("filterKelas").value; // Mengambil nilai dari dropdown Jenjang
+      const kelas = document.getElementById("filterKelas").value; 
       
-      const filtered = allMediaData.filter(item => {
+      currentFilteredData = allMediaData.filter(item => {
         const matchQuery = item.judul.toLowerCase().includes(q) || item.deskripsi.toLowerCase().includes(q);
         const matchKat = currentKategori === "" || item.kategori === currentKategori;
         const matchKelas = kelas === "" || item.kelas === kelas;
-        
         return matchQuery && matchKat && matchKelas;
       });
-      renderMediaCards(filtered);
+      
+      // Setiap kali mencari/filter, kembalikan ke halaman 1
+      currentPage = 1;
+      renderMediaCards(currentFilteredData);
     }
 
     // --- RENDER PESAN & FILTER PESAN ---
@@ -465,7 +505,6 @@
       validPesan.forEach(item => {
         let icon = 'message-square'; let badgeStyle = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200'; let iconStyle = 'text-slate-500';
         const kat = item.kategori || '';
-        
         if(kat.includes('Saran')) { icon = 'lightbulb'; badgeStyle = 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 border-amber-200'; iconStyle = 'text-amber-500'; } 
         else if(kat.includes('Testimoni')) { icon = 'star'; badgeStyle = 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-200'; iconStyle = 'text-emerald-500'; } 
         else if(kat.includes('Bug')) { icon = 'bug'; badgeStyle = 'bg-red-50 dark:bg-red-500/10 text-red-600 border-red-200'; iconStyle = 'text-red-500'; } 
@@ -498,12 +537,11 @@
       });
       btnEl.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
       btnEl.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-
       if (kategori === 'Semua') renderPesanCards(allPesanData);
       else renderPesanCards(allPesanData.filter(item => (item.kategori || '').includes(kategori)));
     }
 
-    // --- AUTOSCROLL SLIDER MEDIA ---
+    // --- AUTOSCROLL SLIDERS ---
     let sliderScrollTimer;
     function initAutoScrollSlider() {
       const grid = document.getElementById("sliderGrid");
@@ -514,7 +552,7 @@
           if (grid.scrollWidth <= grid.clientWidth) return; 
           if (grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 10) grid.scrollTo({ left: 0, behavior: 'smooth' });
           else grid.scrollBy({ left: 320, behavior: 'smooth' });
-        }, 3500); // 3.5 detik
+        }, 3500); 
       };
       startScroll();
       grid.addEventListener('mouseenter', () => clearInterval(sliderScrollTimer));
@@ -523,7 +561,6 @@
       grid.addEventListener('touchend', startScroll, { passive: true });
     }
 
-    // --- AUTOSCROLL TESTIMONI ---
     let pesanScrollTimer;
     function initAutoScrollPesan() {
       const grid = document.getElementById("pesanGrid");
@@ -534,7 +571,7 @@
           if (grid.scrollWidth <= grid.clientWidth) return; 
           if (grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 10) grid.scrollTo({ left: 0, behavior: 'smooth' });
           else grid.scrollBy({ left: 320, behavior: 'smooth' });
-        }, 3000); // 3 detik
+        }, 3000);
       };
       startScroll();
       grid.addEventListener('mouseenter', () => clearInterval(pesanScrollTimer));
@@ -544,7 +581,7 @@
     }
 
     // ==========================================
-    // INJEKSI MODAL (DARK MODE SUPPORTED)
+    // INJEKSI MODAL 
     // ==========================================
     function injectModals() {
       const modalHTML = `
