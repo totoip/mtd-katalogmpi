@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Katalog MPI & Game Interaktif - Mas T Digital</title>
+  <title>Katalog Media Pembelajaran Interaktif (MPI) - Mas T Digital</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -60,7 +60,7 @@
         </div>
         <div>
           <h1 class="font-extrabold text-base md:text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            KATALOG MPI & GAME
+            KATALOG MPI
           </h1>
           <p class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 font-medium">By Mas T Digital</p>
         </div>
@@ -173,7 +173,7 @@
       <button onclick="filterMediaKategori('Game Interaktif')" id="btnFilter-Game Interaktif" class="btn-filter shrink-0 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border px-5 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
         <i data-lucide="gamepad-2" class="w-4 h-4 filter-icon hidden"></i> 🎮 Game
       </button>
-      <button onclick="filterMediaKategori('MPI / E-Modul')" id="btnFilter-MPI / E-Modul" class="btn-filter shrink-0 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border px-5 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+      <button onclick="filterMediaKategori('E-Modul')" id="btnFilter-E-Modul" class="btn-filter shrink-0 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border px-5 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
         <i data-lucide="book-open" class="w-4 h-4 filter-icon hidden"></i> 📚 E-Modul
       </button>
       <button onclick="filterMediaKategori('Kuis & Asesmen')" id="btnFilter-Kuis & Asesmen" class="btn-filter shrink-0 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border px-5 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
@@ -187,7 +187,7 @@
     <!-- GRID SEMUA MEDIA -->
     <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 scroll-mt-28"></div>
     
-    <!-- PAGINASI (Ditambahkan di Sini) -->
+    <!-- PAGINASI -->
     <div id="paginationControls" class="flex flex-wrap justify-center items-center gap-2 mt-4"></div>
 
   </main>
@@ -200,11 +200,13 @@
         <h2 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white">Suara Pengunjung</h2>
       </div>
       
+      <!-- Tombol Filter Testimoni Lengkap -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
         <button onclick="filterPesan('Semua', this)" class="btn-filter-pesan bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-md transition">Semua</button>
         <button onclick="filterPesan('Testimoni', this)" class="btn-filter-pesan bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Testimoni</button>
         <button onclick="filterPesan('Saran', this)" class="btn-filter-pesan bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Saran & Ide</button>
         <button onclick="filterPesan('Request', this)" class="btn-filter-pesan bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Request</button>
+        <button onclick="filterPesan('Bug', this)" class="btn-filter-pesan bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Lapor Bug</button>
       </div>
     </div>
     <div id="pesanGrid" class="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth"></div>
@@ -673,7 +675,7 @@
             <form id="mediaForm" onsubmit="handleFormSubmit(event)" class="p-6 overflow-y-auto space-y-3">
               <input type="hidden" id="editId">
               <input type="text" id="formJudul" required placeholder="Judul Media" class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white">
-              <div class="grid grid-cols-2 gap-3"><select id="formKategori" required class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white"><option>Game Interaktif</option><option>MPI / E-Modul</option><option>Kuis & Asesmen</option><option>Simulasi</option></select><select id="formKelas" required class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white"><option>PAUD/TK</option><option>SD Kelas 1-3</option><option>SD Kelas 4-6</option><option>SMP</option><option>SMA/K</option><option>Umum</option></select></div>
+              <div class="grid grid-cols-2 gap-3"><select id="formKategori" required class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white"><option>Game Interaktif</option><option>E-Modul</option><option>Kuis & Asesmen</option><option>Simulasi</option></select><select id="formKelas" required class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white"><option>PAUD/TK</option><option>SD Kelas 1-3</option><option>SD Kelas 4-6</option><option>SMP</option><option>SMA/K</option><option>Umum</option></select></div>
               <textarea id="formDeskripsi" rows="2" required placeholder="Deskripsi Singkat" class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white"></textarea>
               <input type="url" id="formUrlMedia" required placeholder="URL Web Media" class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white">
               <input type="url" id="formUrlThumbnail" required placeholder="URL Thumbnail" class="w-full bg-slate-50 dark:bg-slate-950 border dark:border-slate-800 rounded-xl p-2.5 text-xs dark:text-white">
