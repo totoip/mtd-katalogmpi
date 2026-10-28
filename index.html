@@ -339,12 +339,29 @@
     }
     function trackVisitorOncePerDay() {
       const dateKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
-      if (localStorage.getItem('katalogVisitDate') === dateKey) return;
-      localStorage.setItem('katalogVisitDate', dateKey);
-      fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_visit', visitor_id: getVisitorId() }) }).then(() => { if (isAdmin) fetchMediaData(); }).catch(() => {});
+      // Pakai key versi baru agar kunjungan yang sebelumnya gagal tidak dianggap sudah terkirim.
+      if (localStorage.getItem('katalogVisitSentDateV2') === dateKey) return;
+      fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_visit', visitor_id: getVisitorId() }) })
+        .then(res => res.json())
+        .then(result => {
+          if (result.status !== 'success') throw new Error(result.message || 'Pencatatan ditolak');
+          localStorage.setItem('katalogVisitSentDateV2', dateKey);
+          fetchMediaData();
+        })
+        .catch(err => {
+          console.warn('Kunjungan belum tercatat. Pastikan Apps Script terbaru sudah dideploy.', err);
+          const box = document.getElementById('usageStats');
+          if (box) box.innerHTML = '<p>Statistik belum terhubung. Admin perlu memperbarui dan men-deploy Apps Script.</p>';
+        });
     }
     function renderDashboardStats(stats) {
-      if (!stats) return;
+      if (!stats) {
+        document.getElementById('statVisitorsToday').textContent = '—';
+        document.getElementById('statVisitorsMonth').textContent = '—';
+        document.getElementById('statVisitorsYear').textContent = '—';
+        document.getElementById('usageStats').innerHTML = '<p>Statistik belum tersedia. Perbarui dan deploy kode Apps Script statistik.</p>';
+        return;
+      }
       document.getElementById('statVisitorsToday').textContent = Number(stats.visitors?.today || 0).toLocaleString('id-ID');
       document.getElementById('statVisitorsMonth').textContent = Number(stats.visitors?.month || 0).toLocaleString('id-ID');
       document.getElementById('statVisitorsYear').textContent = Number(stats.visitors?.year || 0).toLocaleString('id-ID');
