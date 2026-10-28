@@ -144,7 +144,7 @@
       </div>
 
       <!-- SEARCH BAR & FILTER JENJANG -->
-      <div class="flex flex-col sm:flex-row w-full md:w-auto gap-3 relative">
+      <div class="flex flex-col sm:flex-row flex-wrap w-full md:w-auto gap-3 relative">
         <div class="relative w-full sm:w-44">
           <i data-lucide="graduation-cap" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
           <select id="filterKelas" onchange="filterMedia()" class="w-full bg-white dark:bg-slate-900 text-sm rounded-2xl py-3.5 pl-11 pr-8 border border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-cyan-400 outline-none transition-all shadow-sm dark:text-white appearance-none cursor-pointer">
@@ -159,6 +159,16 @@
           <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
         </div>
         
+        <div class="relative w-full sm:w-48">
+          <i data-lucide="arrow-down-wide-narrow" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+          <select id="sortMedia" onchange="filterMedia()" aria-label="Urutkan media" class="w-full bg-white dark:bg-slate-900 text-sm rounded-2xl py-3.5 pl-11 pr-8 border border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-cyan-400 outline-none transition-all shadow-sm dark:text-white appearance-none cursor-pointer">
+            <option value="recent">Terbaru diperbarui</option>
+            <option value="week">Terpopuler minggu ini</option>
+            <option value="most-used">Paling sering digunakan</option>
+            <option value="title">Judul A–Z</option>
+          </select>
+        </div>
+
         <div class="relative w-full sm:w-64 md:w-72">
           <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
           <input type="text" id="searchInput" oninput="filterMedia()" placeholder="Cari media, topik..." 
@@ -209,9 +219,13 @@
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Total kunjungan · hari ini</div><div id="statTotalVisitsToday" class="text-xl md:text-2xl font-black text-cyan-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">termasuk kunjungan ulang</div></div>
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Media dimainkan · hari ini</div><div id="statPlaysToday" class="text-xl md:text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1">—</div><div class="text-[10px] text-slate-400">kali dibuka</div></div>
         </div>
+        <div class="mt-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="trending-up" class="w-4 h-4 text-orange-500"></i><h3 class="text-sm font-extrabold text-slate-800 dark:text-slate-100">Terpopuler 7 hari terakhir</h3></div>
+          <div id="weeklyPopular" class="grid grid-cols-1 sm:grid-cols-3 gap-2"><p class="text-xs text-slate-400">Memuat peringkat…</p></div>
+        </div>
         <details class="mt-4 group">
-          <summary class="cursor-pointer list-none flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 hover:bg-white/70 dark:hover:bg-slate-950/40 transition text-sm font-bold text-slate-700 dark:text-slate-200"><span class="flex items-center gap-2"><i data-lucide="gamepad-2" class="w-4 h-4 text-blue-600 dark:text-cyan-400"></i> Media yang paling sering dimainkan</span><i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i></summary>
-          <div id="usageStats" class="text-sm text-slate-500 dark:text-slate-400 pt-2 px-1">Memuat statistik…</div>
+          <summary class="cursor-pointer list-none flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 hover:bg-white/70 dark:hover:bg-slate-950/40 transition text-sm font-bold text-slate-700 dark:text-slate-200"><span class="flex items-center gap-2"><i data-lucide="gamepad-2" class="w-4 h-4 text-blue-600 dark:text-cyan-400"></i> Rincian media dimainkan</span><i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i></summary>
+          <div id="usageStats" class="max-w-full overflow-x-auto overscroll-x-contain touch-pan-x text-sm text-slate-500 dark:text-slate-400 pt-2 px-1">Memuat statistik…</div>
         </details>
       </div>
     </section>
@@ -277,6 +291,8 @@
     let allMediaData = [];
     let currentActiveMedia = null;
     let allPesanData = [];
+    let allMediaUsageCounts = {};
+    let popularWeekCounts = {};
 
     // --- PAGINASI VARIABLES ---
     let currentPage = 1;
@@ -362,6 +378,7 @@
         document.getElementById('statTotalVisitsToday').textContent = '—';
         document.getElementById('statPlaysToday').textContent = '—';
         document.getElementById('usageStats').innerHTML = '<p>Statistik belum tersedia. Perbarui dan deploy kode Apps Script statistik.</p>';
+        document.getElementById('weeklyPopular').innerHTML = '<p class="text-xs text-slate-400">Peringkat belum tersedia.</p>';
         return;
       }
       document.getElementById('statVisitorsToday').textContent = Number(stats.visitors?.today || 0).toLocaleString('id-ID');
@@ -369,9 +386,32 @@
       document.getElementById('statVisitorsYear').textContent = Number(stats.visitors?.year || 0).toLocaleString('id-ID');
       document.getElementById('statTotalVisitsToday').textContent = Number(stats.visits?.today || 0).toLocaleString('id-ID');
       document.getElementById('statPlaysToday').textContent = Number(stats.usage?.total?.today || 0).toLocaleString('id-ID');
+      allMediaUsageCounts = Object.fromEntries((stats.usage?.media || []).map(x => [x.id, x]));
+      popularWeekCounts = Object.fromEntries((stats.popularWeek || []).map(x => [x.id, x.count]));
+      renderWeeklyPopular(stats.popularWeek || []);
+      // Refresh visible catalog cards so lifetime totals arrive with the statistics.
+      if (currentFilteredData.length) {
+        sortCatalogData(currentFilteredData);
+        renderMediaCards(currentFilteredData);
+      }
       const box = document.getElementById('usageStats'), rows = (stats.usage?.media || []).slice(0, 5);
       if (!rows.length) { box.innerHTML = '<p>Belum ada media yang dibuka.</p>'; return; }
-      box.innerHTML = `<div class="min-w-[520px]"><div class="grid grid-cols-[minmax(180px,1fr)_90px_90px_90px] gap-2 text-xs font-bold border-b pb-2"><span>Media</span><span>Hari ini</span><span>Bulan ini</span><span>Tahun ini</span></div>${rows.map(x => `<div class="grid grid-cols-[minmax(180px,1fr)_90px_90px_90px] gap-2 py-2 border-b"><span class="truncate" title="${escapeHtml(x.title || '')}">${escapeHtml(x.title || 'Tanpa judul')}</span><span>${Number(x.today || 0).toLocaleString('id-ID')}</span><span>${Number(x.month || 0).toLocaleString('id-ID')}</span><span>${Number(x.year || 0).toLocaleString('id-ID')}</span></div>`).join('')}</div>`;
+      box.innerHTML = `<p class="text-[11px] text-slate-400 mb-2">Total penggunaan dihitung sejak pencatatan diaktifkan.${window.innerWidth < 768 ? ' Geser tabel ke samping untuk melihat bulan, tahun, dan total →' : ''}</p><div class="min-w-[620px]"><div class="grid grid-cols-[minmax(180px,1fr)_78px_78px_78px_82px] gap-2 text-xs font-bold border-b pb-2"><span>Media</span><span>Hari ini</span><span>Bulan ini</span><span>Tahun ini</span><span>Total</span></div>${rows.map(x => `<div class="grid grid-cols-[minmax(180px,1fr)_78px_78px_78px_82px] gap-2 py-2 border-b border-slate-200/70 dark:border-slate-700/70"><span class="truncate" title="${escapeHtml(x.title || '')}">${escapeHtml(x.title || 'Tanpa judul')}</span><span>${Number(x.today || 0).toLocaleString('id-ID')}</span><span>${Number(x.month || 0).toLocaleString('id-ID')}</span><span>${Number(x.year || 0).toLocaleString('id-ID')}</span><span class="font-bold">${Number(x.total || 0).toLocaleString('id-ID')}</span></div>`).join('')}</div>`;
+    }
+
+    function renderWeeklyPopular(rows) {
+      const target = document.getElementById('weeklyPopular');
+      const top = rows.slice(0, 3);
+      if (!top.length) { target.innerHTML = '<p class="text-xs text-slate-400">Belum ada media dimainkan dalam 7 hari terakhir.</p>'; return; }
+      target.innerHTML = top.map((entry, index) => {
+        const item = allMediaData.find(media => String(media.id) === String(entry.id));
+        const title = item ? item.judul : (entry.title || 'Media');
+        return `<button onclick="openPopularMedia('${entry.id}')" class="text-left flex items-center gap-3 rounded-2xl border border-white dark:border-slate-800 bg-white/75 dark:bg-slate-950/40 p-3 hover:-translate-y-0.5 hover:shadow-md transition"><span class="w-8 h-8 shrink-0 rounded-xl flex items-center justify-center font-black text-sm ${index === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${index + 1}</span><span class="min-w-0"><span class="block truncate text-xs font-bold text-slate-800 dark:text-slate-100">${escapeHtml(title)}</span><span class="block text-[10px] text-slate-500 mt-0.5">${Number(entry.count || 0).toLocaleString('id-ID')} kali dimainkan</span></span></button>`;
+      }).join('');
+    }
+    function openPopularMedia(id) {
+      const item = allMediaData.find(media => String(media.id) === String(id));
+      if (item) openPlayModal(item.url_media, escapeHtml(item.judul), item.id);
     }
 
     // --- FETCH DATA ---
@@ -393,6 +433,7 @@
           
           // 2. Setup Data untuk Grid (Bawah)
           currentFilteredData = [...allMediaData];
+          sortCatalogData(currentFilteredData);
           currentPage = 1;
           renderMediaCards(currentFilteredData);
           
@@ -471,7 +512,11 @@
             <div class="p-5 flex-1 flex flex-col justify-between">
               <div>
                 <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-1.5 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition">${item.judul}</h3>
-                <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-5 leading-relaxed">${item.deskripsi}</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-3 leading-relaxed">${item.deskripsi}</p>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-[10px] text-slate-500 dark:text-slate-400">
+                  <span class="inline-flex items-center gap-1"><i data-lucide="calendar-clock" class="w-3 h-3"></i> Diperbarui ${formatMediaDate(item.updated_at || item.created_at)}</span>
+                  <span class="inline-flex items-center gap-1"><i data-lucide="play" class="w-3 h-3"></i> ${Number(allMediaUsageCounts[item.id]?.total || 0).toLocaleString('id-ID')} kali digunakan</span>
+                </div>
               </div>
               <div class="space-y-2.5">
                 <div class="grid grid-cols-2 gap-2">
@@ -545,6 +590,17 @@
       applyFilters();
     }
 
+    function sortCatalogData(data) {
+      const mode = document.getElementById('sortMedia')?.value || 'recent';
+      const timestamp = item => new Date(item.updated_at || item.created_at || 0).getTime() || 0;
+      data.sort((a, b) => {
+        if (mode === 'title') return String(a.judul || '').localeCompare(String(b.judul || ''), 'id');
+        if (mode === 'week') return (popularWeekCounts[b.id] || 0) - (popularWeekCounts[a.id] || 0) || timestamp(b) - timestamp(a);
+        if (mode === 'most-used') return (allMediaUsageCounts[b.id]?.total || 0) - (allMediaUsageCounts[a.id]?.total || 0) || timestamp(b) - timestamp(a);
+        return timestamp(b) - timestamp(a);
+      });
+    }
+
     function filterMedia() { applyFilters(); }
 
     function applyFilters() {
@@ -558,7 +614,8 @@
         return matchQuery && matchKat && matchKelas;
       });
       
-      // Setiap kali mencari/filter, kembalikan ke halaman 1
+      sortCatalogData(currentFilteredData);
+      // Setiap kali mencari/filter/sortir, kembalikan ke halaman 1
       currentPage = 1;
       renderMediaCards(currentFilteredData);
     }
@@ -789,7 +846,15 @@
     }
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); document.getElementById('detailModal').classList.remove('flex'); }
 
-    function openPlayModal(url, title, mediaId) { if (mediaId) fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_usage', media_id: mediaId }) }).catch(() => {}); document.getElementById("playTitle").innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span> ${title}`; document.getElementById("playIframe").src = url; document.getElementById("playExternalBtn").href = url; document.getElementById("playModal").classList.remove("hidden"); document.getElementById("playModal").classList.add("flex"); }
+    function recordMediaUse(mediaId) {
+      fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_usage', media_id: mediaId }) })
+        .then(res => res.json())
+        .then(result => { if (result.status !== 'success') throw new Error(result.message || 'Pencatatan gagal'); return fetch(GAS_API_URL, { redirect: 'follow' }); })
+        .then(res => res.json())
+        .then(json => { if (json.status === 'success' && json.data?.stats) renderDashboardStats(json.data.stats); })
+        .catch(err => console.warn('Penggunaan media belum tercatat.', err));
+    }
+    function openPlayModal(url, title, mediaId) { if (mediaId) recordMediaUse(mediaId); document.getElementById("playTitle").innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span> ${title}`; document.getElementById("playIframe").src = url; document.getElementById("playExternalBtn").href = url; document.getElementById("playModal").classList.remove("hidden"); document.getElementById("playModal").classList.add("flex"); }
     function closePlayModal() { document.getElementById("playIframe").src = ""; document.getElementById("playModal").classList.add("hidden"); document.getElementById("playModal").classList.remove("flex"); }
 
     function requestPromptAccessById(id) { const item = allMediaData.find(m => m.id === id); if(item) { currentActiveMedia = item; document.getElementById("inputPasscode").value = ""; document.getElementById("lockErrorMsg").classList.add("hidden"); document.getElementById("ytVideoBtn").href = item.yt_url || "https://youtube.com"; document.getElementById("lockModal").classList.remove("hidden"); document.getElementById("lockModal").classList.add("flex"); } }
@@ -814,6 +879,12 @@
       finally { isSubmitting = false; btn.innerText = "Simpan Data Media"; }
     }
     async function deleteMedia(id) { if (!confirm("Hapus media ini?")) return; try { await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', secret_key: ADMIN_SECRET, id: id }) }); alert("Berhasil dihapus!"); fetchMediaData(); } catch (err) {} }
+    function formatMediaDate(value) {
+      if (!value) return 'Belum tersedia';
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return 'Belum tersedia';
+      return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Jakarta' }).format(date);
+    }
     function escapeHtml(text) { return text.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
   </script>
 </body>
