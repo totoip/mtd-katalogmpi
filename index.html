@@ -132,6 +132,8 @@
   <!-- MAIN CONTAINER (SEMUA MEDIA) -->
   <main class="max-w-7xl mx-auto px-4 py-10 flex-1 w-full flex flex-col gap-8 relative z-10">
     
+
+
     <!-- HEADER SEMUA MEDIA & PENCARIAN -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div>
@@ -189,6 +191,28 @@
     
     <!-- PAGINASI -->
     <div id="paginationControls" class="flex flex-wrap justify-center items-center gap-2 mt-4"></div>
+
+    <!-- STATISTIK PUBLIK: diletakkan di akhir katalog agar tidak menghalangi eksplorasi -->
+    <section aria-label="Statistik komunitas Katalog MPI" class="mt-2 overflow-hidden rounded-3xl border border-blue-200/70 dark:border-slate-700 bg-gradient-to-br from-white via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/60 shadow-sm">
+      <div class="p-5 md:p-7">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20"><i data-lucide="chart-no-axes-combined" class="w-5 h-5"></i></div>
+            <div><h2 class="font-black text-slate-900 dark:text-white">Katalog makin ramai ✨</h2><p class="text-xs text-slate-500 dark:text-slate-400">Terima kasih sudah belajar dan berkarya bersama.</p></div>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/30 px-3 py-1.5 rounded-full w-fit"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Statistik komunitas</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 md:gap-4">
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Hari ini</div><div id="statVisitorsToday" class="text-xl md:text-2xl font-black text-blue-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Bulan ini</div><div id="statVisitorsMonth" class="text-xl md:text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Tahun ini</div><div id="statVisitorsYear" class="text-xl md:text-2xl font-black text-violet-700 dark:text-violet-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+        </div>
+        <details class="mt-4 group">
+          <summary class="cursor-pointer list-none flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 hover:bg-white/70 dark:hover:bg-slate-950/40 transition text-sm font-bold text-slate-700 dark:text-slate-200"><span class="flex items-center gap-2"><i data-lucide="gamepad-2" class="w-4 h-4 text-blue-600 dark:text-cyan-400"></i> Media yang paling sering dimainkan</span><i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i></summary>
+          <div id="usageStats" class="text-sm text-slate-500 dark:text-slate-400 pt-2 px-1">Memuat statistik…</div>
+        </details>
+      </div>
+    </section>
 
   </main>
 
@@ -303,9 +327,31 @@
       lucide.createIcons();
       injectModals();
       fetchMediaData();
+      trackVisitorOncePerDay();
     });
 
     function logoutAdmin() { localStorage.removeItem('isAdminMode'); location.reload(); }
+
+    function getVisitorId() {
+      let id = localStorage.getItem('katalogVisitorId');
+      if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2)); localStorage.setItem('katalogVisitorId', id); }
+      return id;
+    }
+    function trackVisitorOncePerDay() {
+      const dateKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+      if (localStorage.getItem('katalogVisitDate') === dateKey) return;
+      localStorage.setItem('katalogVisitDate', dateKey);
+      fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_visit', visitor_id: getVisitorId() }) }).then(() => { if (isAdmin) fetchMediaData(); }).catch(() => {});
+    }
+    function renderDashboardStats(stats) {
+      if (!stats) return;
+      document.getElementById('statVisitorsToday').textContent = Number(stats.visitors?.today || 0).toLocaleString('id-ID');
+      document.getElementById('statVisitorsMonth').textContent = Number(stats.visitors?.month || 0).toLocaleString('id-ID');
+      document.getElementById('statVisitorsYear').textContent = Number(stats.visitors?.year || 0).toLocaleString('id-ID');
+      const box = document.getElementById('usageStats'), rows = (stats.usage?.media || []).slice(0, 5);
+      if (!rows.length) { box.innerHTML = '<p>Belum ada media yang dibuka.</p>'; return; }
+      box.innerHTML = `<div class="min-w-[520px]"><div class="grid grid-cols-[minmax(180px,1fr)_90px_90px_90px] gap-2 text-xs font-bold border-b pb-2"><span>Media</span><span>Hari ini</span><span>Bulan ini</span><span>Tahun ini</span></div>${rows.map(x => `<div class="grid grid-cols-[minmax(180px,1fr)_90px_90px_90px] gap-2 py-2 border-b"><span class="truncate" title="${escapeHtml(x.title || '')}">${escapeHtml(x.title || 'Tanpa judul')}</span><span>${Number(x.today || 0).toLocaleString('id-ID')}</span><span>${Number(x.month || 0).toLocaleString('id-ID')}</span><span>${Number(x.year || 0).toLocaleString('id-ID')}</span></div>`).join('')}</div>`;
+    }
 
     // --- FETCH DATA ---
     async function fetchMediaData() {
@@ -318,6 +364,7 @@
         if (json.status === 'success') {
           allMediaData = (json.data.media || []).reverse(); 
           allPesanData = json.data.pesan || [];
+          renderDashboardStats(json.data.stats);
           
           // 1. Render Preview Slider (Ambil 8 teratas sesuai request)
           const top8 = allMediaData.slice(0, 8);
@@ -359,7 +406,7 @@
             <div class="p-4 flex-1 flex flex-col justify-between">
               <h3 class="font-bold text-[15px] text-slate-900 dark:text-slate-100 mb-1 leading-tight line-clamp-2">${item.judul}</h3>
               <div class="grid grid-cols-2 gap-2 mt-4">
-                <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}')" class="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1 transition"><i data-lucide="play" class="w-3.5 h-3.5"></i> Mainkan</button>
+                <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}', '${item.id}')" class="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1 transition"><i data-lucide="play" class="w-3.5 h-3.5"></i> Mainkan</button>
                 <button onclick='requestPromptAccessById("${item.id}")' class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1 shadow-md transition"><i data-lucide="key" class="w-3.5 h-3.5"></i> Prompt</button>
               </div>
             </div>
@@ -407,7 +454,7 @@
               </div>
               <div class="space-y-2.5">
                 <div class="grid grid-cols-2 gap-2">
-                  <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md relative z-20"><i data-lucide="play" class="w-3.5 h-3.5"></i> Mainkan</button>
+                  <button onclick="openPlayModal('${item.url_media}', '${escapeHtml(item.judul)}', '${item.id}')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md relative z-20"><i data-lucide="play" class="w-3.5 h-3.5"></i> Mainkan</button>
                   <button onclick='requestPromptAccessById("${item.id}")' class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 border dark:border-slate-700 relative z-20"><i data-lucide="lock" class="w-3.5 h-3.5 text-amber-500"></i> Prompt AI</button>
                 </div>
                 <div class="admin-only gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
@@ -715,13 +762,13 @@
     function openDetailModal(id) {
       const item = allMediaData.find(m => m.id === id); if(!item) return;
       document.getElementById('detailThumb').src = item.url_thumbnail; document.getElementById('detailTitle').innerText = item.judul; document.getElementById('detailDesc').innerText = item.deskripsi;
-      document.getElementById('btnDetailPlay').onclick = () => { closeDetailModal(); openPlayModal(item.url_media, escapeHtml(item.judul)); };
+      document.getElementById('btnDetailPlay').onclick = () => { closeDetailModal(); openPlayModal(item.url_media, escapeHtml(item.judul), item.id); };
       document.getElementById('btnDetailPrompt').onclick = () => { closeDetailModal(); requestPromptAccessById(item.id); };
       document.getElementById('detailModal').classList.remove('hidden'); document.getElementById('detailModal').classList.add('flex');
     }
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); document.getElementById('detailModal').classList.remove('flex'); }
 
-    function openPlayModal(url, title) { document.getElementById("playTitle").innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span> ${title}`; document.getElementById("playIframe").src = url; document.getElementById("playExternalBtn").href = url; document.getElementById("playModal").classList.remove("hidden"); document.getElementById("playModal").classList.add("flex"); }
+    function openPlayModal(url, title, mediaId) { if (mediaId) fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_usage', media_id: mediaId }) }).catch(() => {}); document.getElementById("playTitle").innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span> ${title}`; document.getElementById("playIframe").src = url; document.getElementById("playExternalBtn").href = url; document.getElementById("playModal").classList.remove("hidden"); document.getElementById("playModal").classList.add("flex"); }
     function closePlayModal() { document.getElementById("playIframe").src = ""; document.getElementById("playModal").classList.add("hidden"); document.getElementById("playModal").classList.remove("flex"); }
 
     function requestPromptAccessById(id) { const item = allMediaData.find(m => m.id === id); if(item) { currentActiveMedia = item; document.getElementById("inputPasscode").value = ""; document.getElementById("lockErrorMsg").classList.add("hidden"); document.getElementById("ytVideoBtn").href = item.yt_url || "https://youtube.com"; document.getElementById("lockModal").classList.remove("hidden"); document.getElementById("lockModal").classList.add("flex"); } }
@@ -750,5 +797,3 @@
   </script>
 </body>
 </html>
-
-
