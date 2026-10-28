@@ -212,12 +212,13 @@
           </div>
           <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/30 px-3 py-1.5 rounded-full w-fit"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Statistik komunitas</span>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-2 md:gap-4">
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Pengunjung unik · hari ini</div><div id="statVisitorsToday" class="text-xl md:text-2xl font-black text-blue-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Pengunjung unik · bulan ini</div><div id="statVisitorsMonth" class="text-xl md:text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Pengunjung unik · tahun ini</div><div id="statVisitorsYear" class="text-xl md:text-2xl font-black text-violet-700 dark:text-violet-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Total kunjungan · hari ini</div><div id="statTotalVisitsToday" class="text-xl md:text-2xl font-black text-cyan-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">termasuk kunjungan ulang</div></div>
           <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Media dimainkan · hari ini</div><div id="statPlaysToday" class="text-xl md:text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1">—</div><div class="text-[10px] text-slate-400">kali dibuka</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Total semua media dimainkan</div><div id="statPlaysAllTime" class="text-xl md:text-2xl font-black text-fuchsia-700 dark:text-fuchsia-300 mt-1">—</div><div class="text-[10px] text-slate-400">akumulasi semua judul</div></div>
         </div>
         <div class="mt-5">
           <div class="flex items-center gap-2 mb-3"><i data-lucide="trending-up" class="w-4 h-4 text-orange-500"></i><h3 class="text-sm font-extrabold text-slate-800 dark:text-slate-100">Terpopuler 7 hari terakhir</h3></div>
@@ -377,6 +378,7 @@
         document.getElementById('statVisitorsYear').textContent = '—';
         document.getElementById('statTotalVisitsToday').textContent = '—';
         document.getElementById('statPlaysToday').textContent = '—';
+        document.getElementById('statPlaysAllTime').textContent = '—';
         document.getElementById('usageStats').innerHTML = '<p>Statistik belum tersedia. Perbarui dan deploy kode Apps Script statistik.</p>';
         document.getElementById('weeklyPopular').innerHTML = '<p class="text-xs text-slate-400">Peringkat belum tersedia.</p>';
         return;
@@ -386,6 +388,7 @@
       document.getElementById('statVisitorsYear').textContent = Number(stats.visitors?.year || 0).toLocaleString('id-ID');
       document.getElementById('statTotalVisitsToday').textContent = Number(stats.visits?.today || 0).toLocaleString('id-ID');
       document.getElementById('statPlaysToday').textContent = Number(stats.usage?.total?.today || 0).toLocaleString('id-ID');
+      document.getElementById('statPlaysAllTime').textContent = Number(stats.usage?.total?.allTime || 0).toLocaleString('id-ID');
       allMediaUsageCounts = Object.fromEntries((stats.usage?.media || []).map(x => [x.id, x]));
       popularWeekCounts = Object.fromEntries((stats.popularWeek || []).map(x => [x.id, x.count]));
       renderWeeklyPopular(stats.popularWeek || []);
