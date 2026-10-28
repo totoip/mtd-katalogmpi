@@ -202,10 +202,12 @@
           </div>
           <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/30 px-3 py-1.5 rounded-full w-fit"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Statistik komunitas</span>
         </div>
-        <div class="grid grid-cols-3 gap-2 md:gap-4">
-          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Hari ini</div><div id="statVisitorsToday" class="text-xl md:text-2xl font-black text-blue-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
-          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Bulan ini</div><div id="statVisitorsMonth" class="text-xl md:text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
-          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Tahun ini</div><div id="statVisitorsYear" class="text-xl md:text-2xl font-black text-violet-700 dark:text-violet-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Pengunjung unik · hari ini</div><div id="statVisitorsToday" class="text-xl md:text-2xl font-black text-blue-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Pengunjung unik · bulan ini</div><div id="statVisitorsMonth" class="text-xl md:text-2xl font-black text-indigo-700 dark:text-indigo-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Pengunjung unik · tahun ini</div><div id="statVisitorsYear" class="text-xl md:text-2xl font-black text-violet-700 dark:text-violet-300 mt-1">—</div><div class="text-[10px] text-slate-400">pengunjung</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Total kunjungan · hari ini</div><div id="statTotalVisitsToday" class="text-xl md:text-2xl font-black text-cyan-700 dark:text-cyan-300 mt-1">—</div><div class="text-[10px] text-slate-400">termasuk kunjungan ulang</div></div>
+          <div class="rounded-2xl bg-white/80 dark:bg-slate-950/50 border border-white dark:border-slate-800 p-3 md:p-4"><div class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400">Media dimainkan · hari ini</div><div id="statPlaysToday" class="text-xl md:text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1">—</div><div class="text-[10px] text-slate-400">kali dibuka</div></div>
         </div>
         <details class="mt-4 group">
           <summary class="cursor-pointer list-none flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 hover:bg-white/70 dark:hover:bg-slate-950/40 transition text-sm font-bold text-slate-700 dark:text-slate-200"><span class="flex items-center gap-2"><i data-lucide="gamepad-2" class="w-4 h-4 text-blue-600 dark:text-cyan-400"></i> Media yang paling sering dimainkan</span><i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-open:rotate-180"></i></summary>
@@ -327,7 +329,7 @@
       lucide.createIcons();
       injectModals();
       fetchMediaData();
-      trackVisitorOncePerDay();
+      trackVisit();
     });
 
     function logoutAdmin() { localStorage.removeItem('isAdminMode'); location.reload(); }
@@ -337,15 +339,13 @@
       if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2)); localStorage.setItem('katalogVisitorId', id); }
       return id;
     }
-    function trackVisitorOncePerDay() {
-      const dateKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
-      // Pakai key versi baru agar kunjungan yang sebelumnya gagal tidak dianggap sudah terkirim.
-      if (localStorage.getItem('katalogVisitSentDateV2') === dateKey) return;
+    function trackVisit() {
+      // Setiap pemuatan halaman menambah total kunjungan. ID anonim tetap dipakai
+      // untuk menghitung pengunjung unik secara terpisah di backend.
       fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'track_visit', visitor_id: getVisitorId() }) })
         .then(res => res.json())
         .then(result => {
           if (result.status !== 'success') throw new Error(result.message || 'Pencatatan ditolak');
-          localStorage.setItem('katalogVisitSentDateV2', dateKey);
           fetchMediaData();
         })
         .catch(err => {
@@ -359,12 +359,16 @@
         document.getElementById('statVisitorsToday').textContent = '—';
         document.getElementById('statVisitorsMonth').textContent = '—';
         document.getElementById('statVisitorsYear').textContent = '—';
+        document.getElementById('statTotalVisitsToday').textContent = '—';
+        document.getElementById('statPlaysToday').textContent = '—';
         document.getElementById('usageStats').innerHTML = '<p>Statistik belum tersedia. Perbarui dan deploy kode Apps Script statistik.</p>';
         return;
       }
       document.getElementById('statVisitorsToday').textContent = Number(stats.visitors?.today || 0).toLocaleString('id-ID');
       document.getElementById('statVisitorsMonth').textContent = Number(stats.visitors?.month || 0).toLocaleString('id-ID');
       document.getElementById('statVisitorsYear').textContent = Number(stats.visitors?.year || 0).toLocaleString('id-ID');
+      document.getElementById('statTotalVisitsToday').textContent = Number(stats.visits?.today || 0).toLocaleString('id-ID');
+      document.getElementById('statPlaysToday').textContent = Number(stats.usage?.total?.today || 0).toLocaleString('id-ID');
       const box = document.getElementById('usageStats'), rows = (stats.usage?.media || []).slice(0, 5);
       if (!rows.length) { box.innerHTML = '<p>Belum ada media yang dibuka.</p>'; return; }
       box.innerHTML = `<div class="min-w-[520px]"><div class="grid grid-cols-[minmax(180px,1fr)_90px_90px_90px] gap-2 text-xs font-bold border-b pb-2"><span>Media</span><span>Hari ini</span><span>Bulan ini</span><span>Tahun ini</span></div>${rows.map(x => `<div class="grid grid-cols-[minmax(180px,1fr)_90px_90px_90px] gap-2 py-2 border-b"><span class="truncate" title="${escapeHtml(x.title || '')}">${escapeHtml(x.title || 'Tanpa judul')}</span><span>${Number(x.today || 0).toLocaleString('id-ID')}</span><span>${Number(x.month || 0).toLocaleString('id-ID')}</span><span>${Number(x.year || 0).toLocaleString('id-ID')}</span></div>`).join('')}</div>`;
@@ -814,3 +818,5 @@
   </script>
 </body>
 </html>
+
+
